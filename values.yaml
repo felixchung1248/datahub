@@ -1,5 +1,0 @@
-datahub:
-    datahub-frontend:
-        service:
-            type: NodePort
-            nodePort: 31002

@@ -38,13 +38,23 @@ resource "kubernetes_secret" "neo4j-secrets" {
   depends_on = [kubernetes_namespace.namespace]
 }
 
-resource "helm_release" "datahub" {
-  name       = "datahub"
-  chart      = "/chart"
+resource "helm_release" "prerequisites" {
+  name       = "prerequisites"
+  chart      = "/chart/datahub-prerequisites-0.1.6.tgz"
   namespace  = kubernetes_namespace.namespace.metadata[0].name
   create_namespace = true
   
   depends_on = [kubernetes_secret.mysql_secrets, kubernetes_secret.neo4j-secrets]
+}
+
+
+resource "helm_release" "datahub" {
+  name       = "datahub"
+  chart      = "/chart/datahub-0.3.27.tgz"
+  namespace  = kubernetes_namespace.namespace.metadata[0].name
+  create_namespace = true
+  
+  depends_on = [helm_release.prerequisites]
 }
 
 
